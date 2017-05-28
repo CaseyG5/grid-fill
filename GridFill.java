@@ -14,7 +14,6 @@ class Painter extends JFrame implements ActionListener,
     
     private Color ocean;
     private Color sand;
-    //private Color trap;
     
     private Color clrSelected;
     private Color old;
@@ -40,8 +39,7 @@ class Painter extends JFrame implements ActionListener,
         
         ocean = new Color(90, 180, 250);
         sand = new Color(255, 218, 104);
-        //trap = new Color(125, 76, 55);
-        
+  
         clrSelected = ocean;
         id = "0";
         fill = true;
@@ -56,7 +54,6 @@ class Painter extends JFrame implements ActionListener,
         prepNeighbors(size, size);
         initPanels(size);
         
-        
         add(center, BorderLayout.CENTER);
         
         colors = new JPanel();
@@ -67,9 +64,7 @@ class Painter extends JFrame implements ActionListener,
         JButton blue = new JButton("Ocean");
         blue.addActionListener(this);
         colors.add(blue);
-//        JButton red = new JButton("Copper");
-//        red.addActionListener(this);
-//        colors.add(red);
+        
         JButton yellow = new JButton("Sand");
         yellow.addActionListener(this);
         colors.add(yellow);
@@ -78,9 +73,11 @@ class Painter extends JFrame implements ActionListener,
         options.setBackground(Color.LIGHT_GRAY);
         options.setLayout(new FlowLayout());
         
+        // buttons for options
         JButton pencil = new JButton("Draw");
         pencil.addActionListener(this);
         options.add(pencil);
+            
         JButton bucket = new JButton("Fill");
         bucket.addActionListener(this);
         options.add(bucket);
@@ -100,10 +97,7 @@ class Painter extends JFrame implements ActionListener,
                 clrSelected = sand;
                 id = "1";
                 break;
-//            case "Copper":
-//                clrSelected = trap;
-//                id = "-";
-//                break;
+                
             case "Draw":
                 fill = false;
                 break;
