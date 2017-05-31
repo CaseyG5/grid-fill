@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.EventQueue;
-import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.Queue;        // Queue data structure
 
 class Painter extends JFrame implements ActionListener,
         MouseListener {
@@ -15,20 +15,21 @@ class Painter extends JFrame implements ActionListener,
     private Color ocean;
     private Color sand;
     
+    private ColorPanel[][] canvas;          // canvas of clickable panels
+    private int[][] adj;                    // ragged array of cells and neighbors
+    
     private Color clrSelected;
     private Color old;
     private String id;
     private int cell;
     private Queue<Integer> q;               // queue for BFS
     
-    private ColorPanel[][] canvas;          // canvas of clickable panels
-    private int[][] adj;                    // ragged array of cells and neighbors
-    
-    private boolean fill;                   // to either fill or draw
-    
     private JPanel colors;
     private JPanel center;
     private JPanel options;
+    
+    private boolean fill;                   // to either fill or draw
+    private boolean mDown;
     
     Painter(int size) {
         setTitle("Grid-Fill");
@@ -42,7 +43,6 @@ class Painter extends JFrame implements ActionListener,
   
         clrSelected = ocean;
         id = "0";
-        fill = true;
         
         center = new JPanel();
         center.setLayout(new GridLayout(size, size));
@@ -54,13 +54,14 @@ class Painter extends JFrame implements ActionListener,
         prepNeighbors(size, size);
         initPanels(size);
         
+        
         add(center, BorderLayout.CENTER);
         
         colors = new JPanel();
         colors.setBackground(Color.LIGHT_GRAY);
         colors.setLayout(new FlowLayout());
         
-        // make buttons for colors 
+         // buttons for colors 
         JButton blue = new JButton("Ocean");
         blue.addActionListener(this);
         colors.add(blue);
@@ -73,11 +74,10 @@ class Painter extends JFrame implements ActionListener,
         options.setBackground(Color.LIGHT_GRAY);
         options.setLayout(new FlowLayout());
         
-        // buttons for options
+         // buttons for options
         JButton pencil = new JButton("Draw");
         pencil.addActionListener(this);
         options.add(pencil);
-            
         JButton bucket = new JButton("Fill");
         bucket.addActionListener(this);
         options.add(bucket);
@@ -109,23 +109,31 @@ class Painter extends JFrame implements ActionListener,
         }
     }
     
-    public void mouseClicked(MouseEvent me) {
-        
+    public void mouseClicked(MouseEvent me) { }
+    
+    public void mousePressed(MouseEvent me) { 
         ColorPanel temp = (ColorPanel) me.getComponent();
-         // if color of clicked panel is not already the selected color
-        if(!temp.getBackground().equals(clrSelected)) {
-            if(fill)            
+        if(fill) {
+            // if color of clicked panel is not already the selected color
+            if(!temp.getBackground().equals(clrSelected)) 
                 bfsColor(temp.row, temp.col);   // fill or color a single panel
-            else {
-                canvas[temp.row][temp.col].setBackground(clrSelected);
-                canvas[temp.row][temp.col].label.setText(id);
-            }
+        }
+        else {
+            canvas[temp.row][temp.col].setBackground(clrSelected);
+            canvas[temp.row][temp.col].label.setText(id);
+            mDown = true; 
         }
     }
     
-    public void mousePressed(MouseEvent me) { }
-    public void mouseReleased(MouseEvent me) { }
-    public void mouseEntered(MouseEvent me) { }
+    public void mouseReleased(MouseEvent me) { mDown = false; }
+    
+    public void mouseEntered(MouseEvent me) { 
+        if(mDown) {
+            ColorPanel temp = (ColorPanel) me.getComponent();
+            canvas[temp.row][temp.col].setBackground(clrSelected);
+            canvas[temp.row][temp.col].label.setText(id);
+        }
+    }
     public void mouseExited(MouseEvent me) { }
     
     
@@ -160,8 +168,8 @@ class Painter extends JFrame implements ActionListener,
                 
                 canvas[i][j] = new ColorPanel(i, j, id);    // create panel
                 
-                if(Math.random() < 0.35) {                  // with a color
-                    canvas[i][j].setBackground(sand);
+                if(Math.random() < 0.05) {                  
+                    canvas[i][j].setBackground(sand);       // with a color
                     canvas[i][j].label.setText("1");        // and a label
                 }   
                 else canvas[i][j].setBackground(ocean);
